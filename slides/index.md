@@ -54,9 +54,11 @@ $ f(x) =  x + 1 $
 
 > **wieloparadygmatowy** język programowania zawierający w sobie głównie cechy języka **funkcyjnego**, ale umożliwiającym także pisanie kodu imperatywnego oraz obiektowego. Jest językiem **silnie typowanym** zaprojektowanym w celu pisania prostego, solidnego i wydajnego kodu do rozwiązywania złożonych problemów. Jest uruchamiany na **platformie .NET**.
 
---- 
+***
 
-### Basic F#
+### Funkcje
+
+---
 
 #### Wartości
 
@@ -72,40 +74,82 @@ $ f(x) =  x + 1 $
 
 ### Currying
 
-    let add x y z = x + y + z
+    let add x y = x + y
     
-    let add x y = fun z -> x + y + z
-
-    let add x = fun z -> (fun y -> x + y + z)
+    let add' x = fun y -> x + y
 
 ---
 
 ### Currying
 
-    val add: x -> y -> z -> int
-    
-    val add: x -> (y -> z -> int)
+    let add x y = (+) x y
 
-    val add: x -> (y -> (z -> int))
-
----
-
-### Partial application
-
-    let add x y z = x + y + z
-
-    let add5 y z = add 5 y z
-
-    let add10 = add 5 5
+    let three = ((add 1) 2)
+    let three' = (((+) 1) 2)
 
 ---
 
 ### Partial application
 
-    let addObligation obligationQuery obligation = ()
+    let add x y = (+) x y
 
-    let addObligationIoC = addObligation obligationQueryImplementation
+    let add10 = (+) 10
+
+---
+
+### Partial application
+
+    let getOblgation connectionString obligationId = ...
+
+    let getObligationIoC = getObligation @"Server=.;Database=db;Trusted_Connection=True;"
 
 Coś to przypomina?
 
+---
+
+### Pipe
+
+    let (|>) x f = f x
+
+    [1;2;3;4] 
+    |> List.filter (fun i -> i > 2)
+    |> List.sum
+
+    let Log level message = sprintf "[%s] - %s" level message
+    "some warning" |> Log "Warn"
+
+---
+
+### Kompozycja
+
+    let (>>) f g x = g (f x)
+
+    let add x y = x + y
+    let mul x y = x * y
+
+    let add5AndMultiplyBy3 = add 5 >> mul 3
+
 ***
+
+### Typy algebraiczne
+
+---
+
+### Aliasy
+
+    type ClientId = System.Guid
+    type DocumentNumber = int
+    type Sublogin = string
+    type Document = DocumentNumber * Sublogin
+
+    type QueryFunction = ClientId -> Document list
+
+    let printDocuments (query:QueryFunction) (clientId:ClientId) = 
+        clientId |> query |> List.iter (fun doc -> sprintf "%A" doc)
+---
+
+### Tuple
+
+---
+
+### Rekordy
