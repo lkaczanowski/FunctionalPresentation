@@ -139,17 +139,69 @@ Coś to przypomina?
 
     type ClientId = System.Guid
     type DocumentNumber = int
-    type Sublogin = string
-    type Document = DocumentNumber * Sublogin
+    type DocumentData = string
+    type DocumentTuple = DocumentNumber * DocumentData
 
     type QueryFunction = ClientId -> Document list
 
     let printDocuments (query:QueryFunction) (clientId:ClientId) = 
-        clientId |> query |> List.iter (fun doc -> sprintf "%A" doc)
+        clientId |> query |> List.iter (fun doc -> printf "%A" doc)
+
 ---
 
 ### Tuple
 
+![Tuple](images/F002.png)
+
+    let intANDstring = (1, "str")
+
+    let t2 = (true, "data")
+    let t3 = (1, "data", false)
+
+    let n1 = fst t2
+    let n2 = snd t2
+    let (b, str) = t2
+
 ---
 
 ### Rekordy
+
+    type DocumentRecord = { Number: DocumentNumber; Data: DocumentData; IsSigned: bool }
+
+    let document = { Number = 1; Data = "data"; IsSigned = false }
+
+    let signDocument doc = { doc with IsSigned = true }
+
+    let { Data = d; IsSigned = b } = (signDocument document)
+
+---
+
+### Unie
+
+![Tuple](images/F003.png)
+
+    type intORstring = | Int of int | String of string
+
+---
+
+### Unie
+
+    type DocumentRecord' = { Number: DocumentNumber; Data: DocumentData; } 
+    type DocumentUnion = 
+    | Unsigned of DocumentRecord'
+    | Signed of DocumentRecord'
+
+    let signDocument (document: DocumentUnion) =
+        match document with
+        | Signed _ -> document
+        | Unsigned doc -> Signed doc
+
+---
+
+### Pojedyńcze unie
+
+    type SignedDocument = SignedDocument of DocumentRecord'
+
+    type UnsignedDocument = UnsignedDocument of DocumentRecord'
+
+    let signDocument2 (UnsignedDocument record) = SignedDocument record
