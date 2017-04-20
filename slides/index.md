@@ -54,6 +54,26 @@ $ f(x) =  x + 1 $
 
 > **wieloparadygmatowy** język programowania zawierający w sobie głównie cechy języka **funkcyjnego**, ale umożliwiającym także pisanie kodu imperatywnego oraz obiektowego. Jest językiem **silnie typowanym** zaprojektowanym w celu pisania prostego, solidnego i wydajnego kodu do rozwiązywania złożonych problemów. Jest uruchamiany na **platformie .NET**.
 
+---
+
+### Zasady F#
+
+* Domyślnie immutable
+* Wszystko jest wyrażeniem (expression), które zwraca wynik
+* Funkcje zawsze przyjmują parametry wejściowe i zwracają wynik
+* Formatowanie jest ważne
+* Kolejność plików jest ważna, aby zapobiec cyklicznym zależnościom
+
+---
+
+### Możliwości F#
+
+* Zaawansowane wnioskowanie typów (type inference)
+* Pattern matching + Active Patterns
+* Discriminated unions
+* Computation Expressions
+* Async Workflows + MailboxProcessor (actor pattern)
+
 ***
 
 ### Funkcje
@@ -111,7 +131,7 @@ Coś to przypomina?
 
     let (|>) x f = f x
 
-    [1;2;3;4] 
+    [1..4]
     |> List.filter (fun i -> i > 2)
     |> List.sum
 
@@ -142,7 +162,7 @@ Coś to przypomina?
     type DocumentData = string
     type DocumentTuple = DocumentNumber * DocumentData
 
-    type QueryFunction = ClientId -> Document list
+    type QueryFunction = ClientId -> DocumentTuple list
 
     let printDocuments (query:QueryFunction) (clientId:ClientId) = 
         clientId |> query |> List.iter (fun doc -> printf "%A" doc)
