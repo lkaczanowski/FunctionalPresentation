@@ -469,7 +469,7 @@ Match wartości pola rekordu
 
 ---
 
-    type Calulator() = 
+    type Calculator() = 
         
         let mutable _currentValue = 0
 
