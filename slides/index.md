@@ -130,7 +130,7 @@ vs
 
 ***
 
-### Funkcje
+### Podstawy F#
 
 ---
 
@@ -497,6 +497,105 @@ Match wartości pola rekordu
           member this.Pi = 3.14
           member this.CurrentValue with get() = 0 and set(value) = () }
 
+
+***
+
+### Inne ciekawostki języka
+
+---
+
+### Units of measure (jednostki miary)
+
+    [<Measure>]
+    type degC
+
+    [<Measure>]
+    type degF
+
+    let convertCtoF (temp: float<degC>) = 
+        9.0<degF> / 5.0<degC> * temp + 32.0<degF>
+
+    let convertFtoC (temp: float<degF>) = 
+        5.0<degC> / 9.0<degF> * (temp - 32.0<degF>)
+
+---
+
+### Active patterns
+
+    let (|Even|Odd|) n =
+        if n % 2 = 0 then Even
+        else Odd
+        
+    let testNum n =
+        match n with
+        | Even -> printfn "%i is even" n
+        | Odd -> printfn "%i is odd" n
+
+---
+
+### Partial Active patterns
+
+    open System.Text.RegularExpressions
+
+    let (|RegexContains|_|) pattern input = 
+        let matches = Regex.Matches(input, pattern)
+        if matches.Count > 0 
+        then Some [ for m in matches -> m.Value ]
+        else None
+
+    let testString = function
+        | RegexContains "http://\S+" urls -> printfn "Urls: %A" urls
+        | RegexContains "[^@]@[^.]+\.\W+" emails -> printfn "Emails: %A" emails
+        | RegexContains "\d+" numbers -> printfn "Numbers: %A" numbers
+        | _ -> printfn "Didn't find anything."
+
+---
+
+### Type providers
+
+    open FSharp.Data
+
+    [<Literal>]
+    let sample = @"{
+        ""title"" : ""Management 4.2"",
+        ""author"" : {
+            ""firstName"" : ""Jurgen"",
+            ""lastName"" : ""Appelo""
+        },
+        ""ISBN"" : ""978-0321123479""
+    }"
+
+    type BookTypes = JsonProvider<sample, RootName="book">
+
+    let author = BookTypes.Author("Philip K.", "Dick")
+    let book = BookTypes.Book("Ubik", author, "isbn")
+
+--- 
+
+### Computation Expressions
+
+    type OptionBuilder() =
+        member x.Bind(v,f) = Option.bind f v
+        member x.Return v = Some v
+        member x.ReturnFrom o = o
+        member x.Zero () = None
+    let opt = OptionBuilder()
+
+    let someValue =
+        opt {
+            let x = 12
+            let! y = Some 11
+            return x + y
+        }
+
+    let noneValue =
+        opt {
+            let x = 12
+            let! y = None
+            return x + y
+        }
+
+---
 
 ***
 
